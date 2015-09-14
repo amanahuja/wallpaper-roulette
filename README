@@ -8,7 +8,19 @@ improvements over time:
   - choose which subreddits from which to grab images
   - simple logging of images used
   - some error checks
+  - command line arguments
+  - NSFW mode (separate list of subreddit sources that are less reliable to use
+    at work)
 
+## Command line execution
+
+```
+usage: set_wallpaper.py [-h] [--nsfw]
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --nsfw      get image from alternate list of sources
+```
 
 ## Scheduling
 
