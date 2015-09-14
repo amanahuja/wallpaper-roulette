@@ -128,7 +128,11 @@ if __name__ == "__main__":
     # Parse Args
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--nsfw", dest='use_nsfw', action='store_true')
+    parser.add_argument("--nsfw",
+                        dest='use_nsfw',
+                        action='store_true',
+                        help='get image from alternate list of sources'
+                        )
     parser.set_defaults(use_nsfw=False)
 
     args = parser.parse_args()
