@@ -23,19 +23,7 @@ import os
 
 import argparse
 import logging
-
-MAIN_SOURCE_LIST = [
-    # Reddit wallpaper
-    'http://www.reddit.com/r/wallpaper/new/.json',
-
-    # Other resolutions
-    'http://www.reddit.com/r/WQHD_Wallpaper/new/.json',
-    'http://www.reddit.com/r/4to3Wallpapers/new/.json',
-]
-
-NSFW_SOURCE_LIST = [
-    'https://www.reddit.com/r/aww/new/.json',
-]
+import yaml
 
 root_path = '/home/aman/wallpaper_roulette'
 destination_path = '/home/aman/Downloads/reddit_wallpaper'
@@ -124,6 +112,19 @@ def main(source_list):
     return True
 
 
+def get_source_list(nsfw=False):
+    """Fetches source list from YAML file"""
+
+    with open('wallpaper_sources.yaml') as f:
+        sources = yaml.safe_load(f)
+
+    # Pick source list
+    if nsfw:
+        return sources['NSFW']
+    else:
+        return sources['Main']
+
+
 if __name__ == "__main__":
     # Parse Args
     parser = argparse.ArgumentParser()
@@ -137,10 +138,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # Pick source list
-    source_list = MAIN_SOURCE_LIST
-    if args.use_nsfw:
-        source_list = NSFW_SOURCE_LIST
+    source_list = get_source_list(args.use_nsfw)
 
     logging.basicConfig(format='%(asctime)s %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S %p',
