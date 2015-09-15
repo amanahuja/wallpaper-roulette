@@ -1,0 +1,11 @@
+# Sources for images
+# rename this file to `sources.yaml`
+
+Main:
+  # Reddit wallpaper
+  - 'http://www.reddit.com/r/wallpaper/new/.json'
+  # Other resolutions
+  - 'http://www.reddit.com/r/WQHD_Wallpaper/new/.json'
+
+NSFW:
+  - 'https://www.reddit.com/r/aww/new/.json'
