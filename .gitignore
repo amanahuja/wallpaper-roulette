@@ -2,6 +2,7 @@
 
 # Project specific
 sources.yaml
+*.log
 
 # vim
 *.sw[po]
