@@ -28,7 +28,7 @@ import yaml
 root_path = '/home/aman/wallpaper-roulette'
 destination_path = '/home/aman/Downloads/reddit_wallpaper'
 logfilename = 'wallpaper_history.log'
-source_file = 'sources.yaml'
+sourcefilename = 'sources.yaml'
 
 
 def reddit_post_usable(post):
@@ -116,7 +116,8 @@ def main(source_list):
 def get_source_list(nsfw=False):
     """Fetches source list from YAML file"""
 
-    with open(source_file) as f:
+    source_path = os.path.join(root_path, sourcefilename)
+    with open(source_path) as f:
         sources = yaml.safe_load(f)
 
     # Pick source list
