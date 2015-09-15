@@ -11,6 +11,7 @@ improvements over time:
   - command line arguments
   - NSFW mode (separate list of subreddit sources that are less reliable to use
     at work)
+  - Sources stored in YAML file
 
 ## Command line execution
 
