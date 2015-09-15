@@ -1,3 +1,15 @@
+# .gitignore
+
+# Project specific
+sources.yaml
+
+# vim
+*.sw[po]
+
+# backup files and dir
+*.bkup
+bkup/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
