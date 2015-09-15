@@ -30,7 +30,7 @@ in case my computer is without internet or behind a firewall.
 
  * uses os.system to execute the command
  * can still be executed manually anytime
- * create cronjob: `$ crontab -u`
+ * create cronjob: `$ crontab -e`
  * troublshoot cronjob: `$ tail /var/log/syslog | grep crontab`
 
 
