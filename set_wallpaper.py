@@ -64,7 +64,7 @@ def get_image_url_from_reddit(source):
     url = selected_post['data']['url']
 
     logging.info('[subreddit: "%s"]: %s', subreddit, name)
-    logging.info('URL: %s', url)
+    logging.info('[x of %i options]: URL: %s', len(filtered_posts), url)
 
     return url
 
