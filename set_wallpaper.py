@@ -14,22 +14,19 @@ source:
 
 TBD:
     log source and filename to help track where awesome images came from.
-
 """
 
-import requests
-import numpy as np
 import os
-
 import argparse
 import logging
+import requests
+import numpy as np
 import yaml
 
-root_path = '/home/aman/wallpaper-roulette'
-destination_path = '/home/aman/Downloads/reddit_wallpaper'
-logfilename = 'wallpaper_history.log'
-sourcefilename = 'sources.yaml'
-
+ROOT_PATH = '/home/aman/wallpaper-roulette'
+DESTINATION_PATH = '/home/aman/Downloads/reddit_wallpaper'
+LOGFILENAME = 'wallpaper_history.log'
+SOURCEFILENAME = 'sources.yaml'
 
 def reddit_post_usable(post):
     """ Return True is reddit post has usable image"""
@@ -41,17 +38,18 @@ def reddit_post_usable(post):
     image_url = post['data']['url']
     return has_suffix(image_url)
 
-
 def get_image_url_from_reddit(source):
+    """ Get image URL from a reddit source
+    """
     header = {
         'User-Agent': 'n00b wallpaper bot v0.4',
         # 'Authorization': 'Client-ID ' + client_id
         }
 
-    r = requests.get(source, headers=header)
+    req = requests.get(source, headers=header)
 
     # Get json from URL
-    json_object = r.json()
+    json_object = req.json()
 
     # Get all posts from JSON object
     posts = json_object['data']['children']
@@ -68,8 +66,7 @@ def get_image_url_from_reddit(source):
 
     return url
 
-
-def download_image_from_url(url, destination_path):
+def download_image_from_url(url, DESTINATION_PATH):
     """
     Download image from URL
     """
@@ -83,7 +80,7 @@ def download_image_from_url(url, destination_path):
         }
     i = requests.get(url, stream=True, headers=header)
 
-    outfile = "{}.{}".format(destination_path, str(image_type))
+    outfile = "{}.{}".format(DESTINATION_PATH, str(image_type))
 
     with open(outfile, 'wb') as f:
         for chunk in i.iter_content(chunk_size=1024):
@@ -92,13 +89,14 @@ def download_image_from_url(url, destination_path):
 
     return outfile
 
-
 def main(source_list):
+    """Main function
+    """
     source = np.random.choice(source_list)
     # print "Using source: {}".format(source)
 
     url = get_image_url_from_reddit(source)
-    outfile = download_image_from_url(url, destination_path)
+    outfile = download_image_from_url(url, DESTINATION_PATH)
 
     # print "{} --> {}".format(url, outfile)
 
@@ -112,13 +110,12 @@ def main(source_list):
 
     return True
 
-
 def get_source_list(nsfw=False):
     """Fetches source list from YAML file"""
 
-    source_path = os.path.join(root_path, sourcefilename)
-    with open(source_path) as f:
-        sources = yaml.safe_load(f)
+    source_path = os.path.join(ROOT_PATH, SOURCEFILENAME)
+    with open(source_path) as ff:
+        sources = yaml.safe_load(ff)
 
     # Pick source list
     if nsfw:
@@ -131,11 +128,12 @@ if __name__ == "__main__":
     # Parse Args
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--nsfw",
-                        dest='use_nsfw',
-                        action='store_true',
-                        help='get image from alternate list of sources'
-                        )
+    parser.add_argument(
+            "--nsfw",
+            dest='use_nsfw',
+            action='store_true',
+            help='get image from alternate list of sources'
+            )
     parser.set_defaults(use_nsfw=False)
 
     args = parser.parse_args()
@@ -144,7 +142,7 @@ if __name__ == "__main__":
 
     logging.basicConfig(format='%(asctime)s %(message)s',
                         datefmt='%m/%d/%Y %I:%M:%S %p',
-                        filename=os.path.join(root_path, logfilename),
+                        filename=os.path.join(ROOT_PATH, LOGFILENAME),
                         level=logging.INFO)
 
     logging.getLogger("requests").setLevel(logging.WARNING)
