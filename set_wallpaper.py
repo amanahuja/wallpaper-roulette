@@ -70,8 +70,7 @@ def get_image_url_from_reddit(source):
     return url
 
 def download_image_from_url(url, DESTINATION_PATH):
-    """
-    Download image from URL
+    """ Download image from URL
     """
 
     image_type = url.split('.')[-1]
@@ -83,19 +82,19 @@ def download_image_from_url(url, DESTINATION_PATH):
         }
     i = requests.get(url, stream=True, headers=header)
 
-    outfile = "{}.{}".format(DESTINATION_PATH, str(image_type))
+    image_path = "{}.{}".format(DESTINATION_PATH, str(image_type))
 
-    with open(outfile, 'wb') as f:
+    with open(image_path, 'wb') as outfile:
         for chunk in i.iter_content(chunk_size=1024):
-            f.write(chunk)
+            outfile.write(chunk)
     i.raise_for_status()
 
     return outfile
 
-def main(source_list):
+def main(sources=source_list):
     """Main function
     """
-    source = np.random.choice(source_list)
+    source = np.random.choice(sources)
     # print "Using source: {}".format(source)
 
     url = get_image_url_from_reddit(source)
@@ -117,14 +116,13 @@ def get_source_list(nsfw=False):
     """Fetches source list from YAML file"""
 
     source_path = os.path.join(ROOT_PATH, SOURCEFILENAME)
-    with open(source_path) as ff:
-        sources = yaml.safe_load(ff)
+    with open(source_path) as infile:
+        sources = yaml.safe_load(infile)
 
     # Pick source list
     if nsfw:
         return sources['NSFW']
-    else:
-        return sources['Main']
+    return sources['Main']
 
 
 if __name__ == "__main__":
@@ -132,11 +130,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-            "--nsfw",
-            dest='use_nsfw',
-            action='store_true',
-            help='get image from alternate list of sources'
-            )
+        "--nsfw",
+        dest='use_nsfw',
+        action='store_true',
+        help='get image from alternate list of sources'
+        )
     parser.set_defaults(use_nsfw=False)
 
     args = parser.parse_args()
