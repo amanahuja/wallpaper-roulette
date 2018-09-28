@@ -55,6 +55,9 @@ def get_image_url_from_reddit(source):
     posts = json_object['data']['children']
 
     filtered_posts = [p for p in posts if reddit_post_usable(p)]
+    if not filtered_posts:
+        logging.warning('[source: "%s"]: no usable posts.', source)
+        exit()
     selected_post = np.random.choice(filtered_posts)
 
     subreddit = selected_post['data']['subreddit']
