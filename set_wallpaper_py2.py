@@ -89,9 +89,9 @@ def download_image_from_url(url, DESTINATION_PATH):
             outfile.write(chunk)
     i.raise_for_status()
 
-    return outfile
+    return image_path
 
-def main(sources=source_list):
+def main(sources=False):
     """Main function
     """
     source = np.random.choice(sources)
@@ -149,4 +149,4 @@ if __name__ == "__main__":
     logging.getLogger("requests").setLevel(logging.WARNING)
 
     # Start
-    main(source_list)
+    main(sources=source_list)
