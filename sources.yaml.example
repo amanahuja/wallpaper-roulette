@@ -1,18 +1,17 @@
 # Sources for images
 # rename this file to `sources.yaml`
 
-Main:
-    # Reddit SFW <blank>-porn images
+SOURCES:
+    # Reddit 
     - 'https://www.reddit.com/r/spaceporn/new/.json'
     - 'https://www.reddit.com/r/EarthPorn/new/.json'
-    # Other resolutions
+    - 'https://www.reddit.com/r/MinimalWallpaper/new/.json'
+    # Other resolutions on reddit
     - 'http://www.reddit.com/r/WQHD_Wallpaper/new/.json'
     - 'http://www.reddit.com/r/bigwallpapers/new/.json'
     - 'http://www.reddit.com/r/HI_Res/new/.json'
-    # Minimal!
-    - 'https://www.reddit.com/r/MinimalWallpaper/new/.json'
 
-NSFW:
+NSFW_SOURCES:
     # Reddit wallpaper sometimes NSFW
     - 'http://www.reddit.com/r/wallpaper/new/.json'
     # Too cute for work
