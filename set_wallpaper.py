@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Takes care of interfaces to reddit, IG and other sources
 Fetches wallpapers from where specified in the file
@@ -11,6 +13,9 @@ import numpy as np
 
 class ImageFetcher: 
     """Fetches images"""
+    def __init__(self) -> None:
+        self.dest_path = None
+
     def __call__(self, source_url: str, target_dir: str) -> None:
         header = {
             'User-Agent': 'n00b wallpaper bot v0.4',
@@ -31,20 +36,25 @@ class ImageFetcher:
                 outfile.write(chunk)
         i.raise_for_status()
 
+        self.dest_path = dest_path
         # TODO: log image source and destination
 
         return None
 
 class RouletteConfig:
     """Reads Roulette config file"""
-    def __init__(self, config_path: str = 'sources.yaml') -> None:
-        assert os.path.exists(config_path)
+    def __init__(self, config_path: str = None) -> None:
+        if config_path is None:
+            script_path = os.path.realpath(__file__)
+            config_path = os.path.join(
+                os.path.dirname(script_path), 'sources.yaml')
+        assert os.path.exists(config_path), config_path
 
         with open(config_path) as infile:
             config = yaml.safe_load(infile)
 
-        self.sources = config['Main']
-        self.nsfw_sources = config['NSFW']
+        self.sources = config['SOURCES']
+        self.nsfw_sources = config['NSFW_SOURCES']
 
     def source_list(self, nsfw: bool = False):
         """get list of sources"""
@@ -145,6 +155,7 @@ def _check_reddit_post(post):
         return True
     return False
 
+
 # this is a test
 rconf = RouletteConfig()
 source = rconf.random_source()
@@ -154,6 +165,19 @@ rsource = RouletteSource('REDDIT', source)
 img_url = rsource.random_image()
 print(img_url)
 
-get_image = ImageFetcher()
-get_image(source_url = img_url, 
+roulette_image = ImageFetcher()
+roulette_image(source_url = img_url, 
          target_dir = '/home/aman/Downloads/')
+
+# use this for gnome desktop / unity
+img_path = "file://{}".format(roulette_image.dest_path)
+setbg_command = "gsettings set org.gnome.desktop.background picture-uri {}".format(img_path)
+os.system(setbg_command)
+
+# use this for i3wm
+img_path = roulette_image.dest_path
+setbg_command = "feh --bg-scale {}".format(img_path)
+os.system(setbg_command)
+
+# import subprocess
+# subprocess.call([setbg_command, img_path])
