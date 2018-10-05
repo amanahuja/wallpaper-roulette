@@ -7,9 +7,12 @@ Fetches wallpapers from where specified in the file
 
 import os
 import requests
+import logging
 import yaml
 import numpy as np
 
+# set root path to location of this file
+ROOT_PATH = os.path.dirname(os.path.realpath(__file__))
 
 class ImageFetcher: 
     """Fetches images"""
@@ -45,9 +48,7 @@ class RouletteConfig:
     """Reads Roulette config file"""
     def __init__(self, config_path: str = None) -> None:
         if config_path is None:
-            script_path = os.path.realpath(__file__)
-            config_path = os.path.join(
-                os.path.dirname(script_path), 'sources.yaml')
+            config_path = os.path.join(ROOT_PATH, 'sources.yaml')
         assert os.path.exists(config_path), config_path
 
         with open(config_path) as infile:
@@ -122,17 +123,17 @@ class RouletteSource:
 
         filtered_posts = [p for p in posts if _check_reddit_post(p)]
         if not filtered_posts:
-            # logging.warning('[source: "%s"]: no usable posts.', source)
+            logging.warning('[source: "%s"]: no usable posts.', self.source_url)
             exit()
         selected_post = np.random.choice(filtered_posts)
 
         image_url = selected_post['data']['url']
 
-        # TODO: logging here
-        # subreddit = selected_post['data']['subreddit']
-        # name = selected_post['data']['title']
-        # logging.info('[subreddit: "%s"]: %s', subreddit, name)
-        # logging.info('[x of %i options]: URL: %s', len(filtered_posts), url)
+        # logging
+        subreddit = selected_post['data']['subreddit']
+        name = selected_post['data']['title']
+        logging.info('[subreddit: "%s"]: %s', subreddit, name)
+        logging.info('[x of %i options]: URL: %s', len(filtered_posts), image_url)
 
         return image_url
 
@@ -156,28 +157,39 @@ def _check_reddit_post(post):
     return False
 
 
-# this is a test
-rconf = RouletteConfig()
-source = rconf.random_source()
-print(source)
+def run_wallpaper_roulette():
+    """run the thing"""
+    # Start logging
+    logging.basicConfig(
+        format='%(asctime)s %(message)s',
+        datefmt='%m/%d/%Y %I:%M:%S %p',
+        filename=os.path.join(ROOT_PATH, "wallpaper_history.log"),
+        level=logging.INFO)
 
-rsource = RouletteSource('REDDIT', source)
-img_url = rsource.random_image()
-print(img_url)
+    logging.getLogger("requests").setLevel(logging.WARNING)
 
-roulette_image = ImageFetcher()
-roulette_image(source_url = img_url, 
-         target_dir = '/home/aman/Downloads/')
+    rconf = RouletteConfig()
+    source_url = rconf.random_source()
+    # hard coded (TODO)
+    source_type = 'REDDIT'
 
-# use this for gnome desktop / unity
-img_path = "file://{}".format(roulette_image.dest_path)
-setbg_command = "gsettings set org.gnome.desktop.background picture-uri {}".format(img_path)
-os.system(setbg_command)
+    rsrc = RouletteSource(source_type, source_url)
+    img_url = rsrc.random_image()
 
-# use this for i3wm
-img_path = roulette_image.dest_path
-setbg_command = "feh --bg-scale {}".format(img_path)
-os.system(setbg_command)
+    roulette_image = ImageFetcher()
+    roulette_image(source_url=img_url, target_dir='/home/aman/Downloads/')
 
-# import subprocess
-# subprocess.call([setbg_command, img_path])
+    # use this for gnome desktop / unity
+    setbg_command = ("gsettings set org.gnome.desktop.background picture-uri " +
+                     f"file://{roulette_image.dest_path}")
+    os.system(setbg_command)
+
+    # use this for i3wm
+    setbg_command = f"feh --bg-scale {roulette_image.dest_path}"
+    os.system(setbg_command)
+
+    # import subprocess
+    # subprocess.call([setbg_command, img_path])
+
+if __name__ == "__main__":
+    run_wallpaper_roulette()
